@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.10
+    container_name: db_alga
+    environment:
+      POSTGRES_DB: db_alga
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8861
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: mobiauto-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db_alga
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 8861
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  db_data:
