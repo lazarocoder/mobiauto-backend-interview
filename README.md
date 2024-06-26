@@ -25,8 +25,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 3. Após a conclusão do download das dependências, execute as tarefas “maven clean” e, em seguida, “maven install” para garantir uma compilação limpa e a instalação dos artefatos.
    - Em caso de erros durante o download dos artefatos, execute: `mvn dependency:purge-local-repository install`
 4. Navegue até a pasta profiles, para iniciar o container, execute no seu terminal: `docker-compose up`. Para executar em segundo plano, adicione a flag `-d`: `docker-compose up -d`.
-5. Navegue até a classe principal da aplicação, “MobiautoBackendInterviewApiApplication.java”, e inicie a aplicação.
-6. Abra seu navegador e acesse: `http://localhost:8080/swagger-ui/index.html` para visualizar a documentação interativa (Swagger) da API.
+5. Navegue até a classe principal da aplicação, `MobiautoBackendInterviewApiApplication.java`, e inicie a aplicação.
+6. Abra seu navegador e acesse: http://localhost:8080/swagger-ui/index.html para visualizar a documentação interativa (Swagger) da API.
 
 ## Dados de acesso do authentication no swagger
 
@@ -79,6 +79,11 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
   - Foco: Utilitários.
   - Detalhes: Funções auxiliares utilizadas em várias partes da aplicação, incluindo manipulação de strings, datas, validações comuns, etc.
 
+## Dos testes unitários
+
+Segue os resultados da cobertura de testes. Para executar os testes, basta acessar a pasta raiz do projeto e clicar na opção "Run with coverage".
+
+![Cobertura de testes](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/29c75667-a285-49c4-9fdc-521b573585f6)
 
 
 ## Tecnico responsável
