@@ -14,6 +14,8 @@ public interface OportunidadeService {
 
     List<Oportunidade> findAllInRevenda(Long idRevenda);
 
+    List<Oportunidade>  buscarOportunidadesDaRevenda( UserPrincipal userPrincipal);
+
     Oportunidade save(CadastroOportunidadeDto cadastroOportunidadeDto);
 
     Oportunidade atender(CadastroOportunidadeDto cadastroOportunidadeDto, UserPrincipal userPrincipal);

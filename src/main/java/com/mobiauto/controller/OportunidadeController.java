@@ -4,8 +4,6 @@ package com.mobiauto.controller;
 import com.mobiauto.config.NivelAcessoConfig;
 import com.mobiauto.dto.CadastroOportunidadeDto;
 import com.mobiauto.model.Oportunidade;
-import com.mobiauto.model.Revenda;
-import com.mobiauto.model.Usuario;
 import com.mobiauto.security.UserPrincipal;
 import com.mobiauto.service.OportunidadeService;
 import com.mobiauto.service.RevendaService;
@@ -48,16 +46,14 @@ public class OportunidadeController {
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ASSISTENTE + "')")
     @GetMapping("/revenda")
     public ResponseEntity<Object> buscarOportunidadesDaRevenda(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Revenda revenda = getUsuarioAutenticado(userPrincipal).getLojaAssociada();
-        return (revenda != null) ? ResponseEntity.ok(service.findAllInRevenda(revenda.getId())) : ResponseEntity.badRequest().body("O usuário precisa ter uma loja que seja associada ao mesmo para realizar a busca.");
+        return  ResponseEntity.ok(service.buscarOportunidadesDaRevenda(userPrincipal));
     }
 
     @Operation(summary = "Busca uma oportunidade pelo seu id.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ADMINISTRADOR + "')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscarOportunidadePorId(@PathVariable Long id) {
-        Oportunidade oportunidade = service.findById(id);
-        return (oportunidade != null) ? ResponseEntity.ok(oportunidade) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @Operation(summary = "Cadastra uma nova oportunidade.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
@@ -101,10 +97,6 @@ public class OportunidadeController {
     public ResponseEntity<Object> deletarOportunidadePorId(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.ok().body("Oportunidade realizada com sucesso.");
-    }
-
-    private Usuario getUsuarioAutenticado(UserPrincipal userPrincipal) {
-        return usuarioService.findByEmail(userPrincipal.getUsername());
     }
 
 }

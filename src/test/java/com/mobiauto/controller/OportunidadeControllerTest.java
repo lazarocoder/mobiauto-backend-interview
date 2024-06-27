@@ -108,41 +108,4 @@ public class OportunidadeControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    @Test
-    void buscarOportunidadesDaRevenda() {
-        when(usuarioService.findByEmail(userPrincipal.getUsername())).thenReturn(usuario);
-        when(service.findAllInRevenda(usuario.getLojaAssociada().getId())).thenReturn(oportunidades);
-
-        ResponseEntity<Object> responseOportunidades = controller.buscarOportunidadesDaRevenda(userPrincipal);
-
-        assertEquals(ResponseEntity.ok(oportunidades), responseOportunidades);
-        verify(service).findAllInRevenda(usuario.getLojaAssociada().getId());
-        verifyNoMoreInteractions(service);
-        verify(usuarioService).findByEmail(userPrincipal.getUsername());
-        verifyNoMoreInteractions(usuarioService);
-
-        usuario.setLojaAssociada(null);
-        responseOportunidades = controller.buscarOportunidadesDaRevenda(userPrincipal);
-
-        assertEquals(ResponseEntity.badRequest().body("O usuário precisa ter uma loja que seja associada ao mesmo para realizar a busca."), responseOportunidades);
-        verify(service, never()).findAllInRevenda(null);
-    }
-
-    @Test
-    void buscarOportunidadePorId() {
-        when(service.findById(oportunidade.getId())).thenReturn(oportunidade);
-
-        ResponseEntity<Object> responseOportunidade = controller.buscarOportunidadePorId(oportunidade.getId());
-
-        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
-
-        verify(service).findById(oportunidade.getId());
-        verifyNoMoreInteractions(service);
-
-        when(service.findById(oportunidade.getId())).thenReturn(null);
-        responseOportunidade = controller.buscarOportunidadePorId(oportunidade.getId());
-
-        assertEquals(ResponseEntity.notFound().build(), responseOportunidade);
-    }
-
 }

@@ -1,12 +1,15 @@
 package com.mobiauto.service.implementation;
 
 
+import com.mobiauto.exception.EntidadeNaoEncontradaException;
+import com.mobiauto.exception.ValidacaoException;
 import com.mobiauto.model.Revenda;
 import com.mobiauto.model.Role;
 import com.mobiauto.model.Usuario;
+import com.mobiauto.security.UserPrincipal;
+import com.mobiauto.service.UsuarioService;
 import com.mobiauto.service.repository.RoleRepository;
 import com.mobiauto.service.repository.UsuarioRepository;
-import com.mobiauto.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +31,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario findById(Long id) {
-        return repository.findById(id).orElse(null);
+
+        var usuario = repository.findById(id).orElse(null);
+
+        if(usuario == null){
+            throw new EntidadeNaoEncontradaException("Usuário não encontrado");
+        }
+
+        return usuario;
     }
 
     @Override
@@ -50,7 +60,39 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public List<Usuario> buscarUsuariosDaRevenda(UserPrincipal userPrincipal) {
+        Revenda revenda = getUsuarioAutenticado(userPrincipal).getLojaAssociada();
+        if (revenda == null) {
+            throw new ValidacaoException("O usuário precisa ter uma loja associada para que possa realizar a busca.");
+        }
+
+        return repository.findAll().stream()
+                .filter(u -> Objects.equals(Optional.ofNullable(u.getLojaAssociada())
+                        .map(Revenda::getId).orElse(null), revenda.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Usuario save(Usuario usuario) {
+
+       validarCadastro(usuario);
+
+        return saveUsuario(usuario);
+    }
+
+    private void validateUsuario(Usuario usuario){
+        if (usuario.getId() != null) {
+            throw new ValidacaoException("O parâmetro 'id' não pode ser informado em cadastro.");
+        }
+
+        var usuarioPorEmail = findByEmail(usuario.getEmail());
+
+        if (usuarioPorEmail != null) {
+            throw new ValidacaoException("O email informado já possui cadastro.");
+        }
+    }
+
+    private Usuario saveUsuario(Usuario usuario){
         validarCadastro(usuario);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuario.setHorarioUltimaOportunidade(new Date());
@@ -59,8 +101,63 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public Usuario cadastrarUsuarioEmRevenda(Usuario usuario, UserPrincipal userPrincipal) {
+        validarCadastro(usuario);
+
+        Usuario usuarioAutenticado = getUsuarioAutenticado(userPrincipal);
+        if (usuarioAutenticado.getLojaAssociada() == null) {
+            throw new ValidacaoException("O usuário precisa ter uma loja que seja associada ao mesmo para realizar o cadastro.");
+        }
+
+        usuario.setLojaAssociada(usuarioAutenticado.getLojaAssociada());
+
+        return saveUsuario(usuario);
+    }
+
+    private Usuario getUsuarioAutenticado(UserPrincipal userPrincipal) {
+        return findByEmail(userPrincipal.getUsername());
+    }
+
+    @Override
     public Usuario update(Long id, Usuario usuario) {
-        Usuario usuarioExistente = validarEdicao(id, usuario);
+        var usuarioExistente = validateUpdate(id, usuario);
+
+        return updateUsuario(usuarioExistente, usuario);
+    }
+
+    @Override
+    public Usuario editarUsuarioEmRevenda(Long id, Usuario usuario, UserPrincipal userPrincipal) {
+
+        var usuarioExistente = validateUpdate(id, usuario);
+
+        Usuario usuarioAutenticado = getUsuarioAutenticado(userPrincipal);
+        Long idRevendaUsuarioAutenticado = usuarioAutenticado.getLojaAssociada().getId();
+        Long idRevendaUsuarioNovo = findById(id).getLojaAssociada().getId();
+
+        if (!Objects.equals(idRevendaUsuarioAutenticado, idRevendaUsuarioNovo)) {
+            throw new ValidacaoException("O usuário precisa ter uma loja associada correspondente à loja do usuário a ser editado.");
+        }
+
+        return updateUsuario(usuarioExistente, usuario);
+    }
+
+    private Usuario validateUpdate(Long id, Usuario usuario){
+        var usuarioPorEmail = findByEmail(usuario.getEmail());
+
+        if (usuarioPorEmail != null && !Objects.equals(id, usuarioPorEmail.getId())) {
+            throw new ValidacaoException("O email informado já possui cadastro.");
+        }
+
+        var usuarioExistente = findById(id);
+
+        if (usuarioExistente == null) {
+            throw new EntidadeNaoEncontradaException("Usuário não encontrado.");
+        }
+
+        return usuarioExistente;
+    }
+
+    private Usuario updateUsuario(Usuario usuarioExistente, Usuario usuario) {
         atualizarDadosUsuario(usuarioExistente, usuario);
         return repository.save(usuarioExistente);
     }
@@ -68,7 +165,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Usuário não encontrado.");
+            throw new EntidadeNaoEncontradaException("Usuário não encontrado.");
         }
         repository.deleteById(id);
     }

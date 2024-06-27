@@ -2,7 +2,6 @@ package com.mobiauto.controller;
 
 
 import com.mobiauto.config.NivelAcessoConfig;
-import com.mobiauto.model.Revenda;
 import com.mobiauto.model.Usuario;
 import com.mobiauto.security.UserPrincipal;
 import com.mobiauto.service.UsuarioService;
@@ -16,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "api/v1/usuarios", produces = {"application/json"})
@@ -45,27 +42,20 @@ public class UsuarioController {
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_GERENTE + "')")
     @GetMapping("/revenda")
     public ResponseEntity<Object> buscarUsuariosDaRevenda(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Revenda revenda = getUsuarioAutenticado(userPrincipal).getLojaAssociada();
-        if (revenda == null) {
-            return ResponseEntity.badRequest().body("O usuário precisa ter uma loja associada para que possa realizar a busca.");
-        }
-        return ResponseEntity.ok(service.findAllInRevenda(revenda.getId()));
+        return ResponseEntity.ok(service.buscarUsuariosDaRevenda(userPrincipal));
     }
 
     @Operation(summary = "Busca um usuário pelo seu id.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ADMINISTRADOR + "')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscarUsuarioPorId(@PathVariable Long id) {
-        Usuario usuario = service.findById(id);
-        return (usuario != null) ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @Operation(summary = "Cadastrar um novo usuário.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ADMINISTRADOR + "')")
     @PostMapping("/cadastrar")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody @Validated Usuario usuario) {
-        ResponseEntity<Object> erro = validarUsuario(true, usuario, null);
-        if (erro != null) return erro;
         return ResponseEntity.ok(service.save(usuario));
     }
 
@@ -73,24 +63,13 @@ public class UsuarioController {
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_GERENTE + "')")
     @PostMapping("/cadastrar/revenda")
     public ResponseEntity<Object> cadastrarUsuarioEmRevenda(@RequestBody @Validated Usuario usuario, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        ResponseEntity<Object> erro = validarUsuario(true, usuario, null);
-        if (erro != null) return erro;
-
-        Usuario usuarioAutenticado = getUsuarioAutenticado(userPrincipal);
-        if (usuarioAutenticado.getLojaAssociada() == null) {
-            return ResponseEntity.badRequest().body("O usuário precisa ter uma loja que seja associada ao mesmo para realizar o cadastro.");
-        }
-
-        usuario.setLojaAssociada(usuarioAutenticado.getLojaAssociada());
-        return ResponseEntity.ok(service.save(usuario));
+        return ResponseEntity.ok(service.cadastrarUsuarioEmRevenda(usuario, userPrincipal));
     }
 
     @Operation(summary = "Edita um usuário pelo seu id.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ADMINISTRADOR + "')")
     @PutMapping("/editar/{id}")
     public ResponseEntity<Object> editarUsuario(@PathVariable Long id, @RequestBody @Validated Usuario usuario) {
-        ResponseEntity<Object> erro = validarUsuario(false, usuario, id);
-        if (erro != null) return erro;
         return ResponseEntity.ok(service.update(id, usuario));
     }
 
@@ -98,56 +77,15 @@ public class UsuarioController {
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_PROPRIETARIO + "')")
     @PutMapping("/editar/revenda/{id}")
     public ResponseEntity<Object> editarUsuarioEmRevenda(@PathVariable Long id, @RequestBody @Validated Usuario usuario, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        ResponseEntity<Object> erro = validarUsuario(false, usuario, id);
-        if (erro != null) return erro;
-
-        Usuario usuarioAutenticado = getUsuarioAutenticado(userPrincipal);
-        Long idRevendaUsuarioAutenticado = usuarioAutenticado.getLojaAssociada().getId();
-        Long idRevendaUsuarioNovo = service.findById(id).getLojaAssociada().getId();
-
-        if (!Objects.equals(idRevendaUsuarioAutenticado, idRevendaUsuarioNovo)) {
-            return ResponseEntity.badRequest().body("O usuário precisa ter uma loja associada correspondente à loja do usuário a ser editado.");
-        }
-
-        return ResponseEntity.ok(service.update(id, usuario));
+        return ResponseEntity.ok(service.editarUsuarioEmRevenda(id, usuario, userPrincipal));
     }
 
     @Operation(summary = "Deleta um usuário pelo seu id.", description = NivelAcessoConfig.NIVEL_ADMINISTRADOR)
     @PreAuthorize("hasRole('" + NivelAcessoConfig.NIVEL_ADMINISTRADOR + "')")
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Object> deletarUsuarioPorId(@PathVariable Long id) {
-        if (service.findById(id) != null) {
-            service.delete(id);
-            return ResponseEntity.ok().body("Usuário excluído com sucesso.");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        service.delete(id);
+        return ResponseEntity.ok().body("Usuário excluído com sucesso.");
     }
 
-    private Usuario getUsuarioAutenticado(UserPrincipal userPrincipal) {
-        return service.findByEmail(userPrincipal.getUsername());
-    }
-
-    private ResponseEntity<Object> validarUsuario(boolean isCadastro, Usuario usuario, Long id) {
-        if (isCadastro && usuario.getId() != null) {
-            return ResponseEntity.badRequest().body("O parâmetro 'id' não pode ser informado em cadastro.");
-        }
-
-        Usuario usuarioPorEmail = service.findByEmail(usuario.getEmail());
-
-        if (isCadastro && usuarioPorEmail != null) {
-            return ResponseEntity.badRequest().body("O email informado já possui cadastro.");
-        }
-
-        if (!isCadastro) {
-            if (usuarioPorEmail != null && !Objects.equals(id, usuarioPorEmail.getId())) {
-                return ResponseEntity.badRequest().body("O email informado já possui cadastro.");
-            }
-            if (service.findById(id) == null) {
-                return ResponseEntity.notFound().build();
-            }
-        }
-
-        return null;
-    }
 }

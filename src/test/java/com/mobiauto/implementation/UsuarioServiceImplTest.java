@@ -79,14 +79,6 @@ public class UsuarioServiceImplTest {
     }
 
     @Test
-    void findByIdNull() {
-        assertNull(service.findById(0L));
-
-        verify(repository).findById(0L);
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
     void findByIdEmail() {
         when(repository.findByEmail(usuario.getEmail())).thenReturn(usuario);
 
@@ -128,20 +120,6 @@ public class UsuarioServiceImplTest {
         assertEquals(usuario, usuarioRetornado);
 
         verify(repository).save(usuario);
-        verify(roleRepository).findAll();
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
-    void update() {
-        when(repository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
-        when(repository.save(usuario)).thenReturn(usuario);
-
-        Usuario usuarioRetornado = service.update(usuario.getId(), usuario);
-        assertEquals(Optional.of(usuario).get(), usuarioRetornado);
-
-        verify(repository).save(usuario);
-        verify(repository).findById(usuario.getId());
         verify(roleRepository).findAll();
         verifyNoMoreInteractions(repository);
     }

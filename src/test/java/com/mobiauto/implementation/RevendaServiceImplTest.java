@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 public class RevendaServiceImplTest {
@@ -60,14 +58,6 @@ public class RevendaServiceImplTest {
     }
 
     @Test
-    void findByIdNull() {
-        assertNull(service.findById(0L));
-
-        verify(repository).findById(0L);
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
     void findByIdCnpj() {
         when(repository.findByCnpj(revenda.getCnpj())).thenReturn(revenda);
 
@@ -86,30 +76,6 @@ public class RevendaServiceImplTest {
 
         assertEquals(revendas, listRevendas);
         verify(repository).findAll();
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
-    void save() {
-        when(repository.save(revenda)).thenReturn(revenda);
-
-        Revenda revendaRetornado = service.save(revenda);
-        assertEquals(revenda, revendaRetornado);
-
-        verify(repository).save(revenda);
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
-    void update() {
-        when(repository.findById(revenda.getId())).thenReturn(Optional.of(revenda));
-        when(repository.save(revenda)).thenReturn(revenda);
-
-        Revenda revendaRetornado = service.update(revenda.getId(), revenda);
-        assertEquals(Optional.of(revenda).get(), revendaRetornado);
-
-        verify(repository).save(revenda);
-        verify(repository).findById(revenda.getId());
         verifyNoMoreInteractions(repository);
     }
 

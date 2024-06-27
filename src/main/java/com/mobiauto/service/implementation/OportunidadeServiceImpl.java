@@ -9,11 +9,11 @@ import com.mobiauto.exception.ValidacaoException;
 import com.mobiauto.model.Oportunidade;
 import com.mobiauto.model.Revenda;
 import com.mobiauto.model.Usuario;
-import com.mobiauto.service.repository.OportunidadeRepository;
 import com.mobiauto.security.UserPrincipal;
 import com.mobiauto.service.OportunidadeService;
 import com.mobiauto.service.RevendaService;
 import com.mobiauto.service.UsuarioService;
+import com.mobiauto.service.repository.OportunidadeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,12 @@ public class OportunidadeServiceImpl implements OportunidadeService {
 
     @Override
     public Oportunidade findById(Long id) {
-        return repository.findById(id).orElse(null);
+        var oportunidade = repository.findById(id).orElse(null);
+
+        if(oportunidade == null){
+            throw new EntidadeNaoEncontradaException("Oportunidade não encontrada.");
+        }
+        return oportunidade;
     }
 
     @Override
@@ -56,6 +61,22 @@ public class OportunidadeServiceImpl implements OportunidadeService {
     }
 
     @Override
+    public List<Oportunidade>  buscarOportunidadesDaRevenda( UserPrincipal userPrincipal){
+        var revenda = getUsuarioAutenticado(userPrincipal).getLojaAssociada();
+
+        if(revenda == null) {
+           throw new ValidacaoException("O usuário precisa ter uma loja que seja associada ao mesmo para realizar a busca.");
+        }
+
+        return repository.findAll().stream()
+                .filter(o -> Objects.equals(
+                        Optional.ofNullable(o.getLojaAssociada()).map(Revenda::getId).orElse(null),
+                        revenda.getId()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Oportunidade save(CadastroOportunidadeDto cadastroOportunidadeDto) {
         var oportunidade = new Oportunidade();
         BeanUtils.copyProperties(cadastroOportunidadeDto, oportunidade);
@@ -68,7 +89,7 @@ public class OportunidadeServiceImpl implements OportunidadeService {
         oportunidade.setUsuarioAssociado(usuarioAssociado);
 
         if (usuarioAssociado != null) {
-           // usuarioAssociado.setHorarioUltimaOportunidade(LocalDateTime.now());
+           usuarioAssociado.setHorarioUltimaOportunidade(new Date());
         }
 
         if (oportunidade.getUsuarioAssociado() != null && oportunidade.getDataAtribuicao() == null) {
@@ -108,19 +129,6 @@ public class OportunidadeServiceImpl implements OportunidadeService {
 
     private Usuario getUsuarioAutenticado(UserPrincipal userPrincipal) {
         return usuarioService.findByEmail(userPrincipal.getUsername());
-    }
-
-    private void validarOportunidade(boolean isCadastro, CadastroOportunidadeDto cadastroOportunidadeDto, Long id) {
-
-        if (!isCadastro && repository.findById(id) == null) {
-            //return ResponseEntity.notFound().build();
-        }
-
-        if (cadastroOportunidadeDto.getStatus() == Status.CONCLUIDO && cadastroOportunidadeDto.getMotivoConclusao() == null) {
-            //return ResponseEntity.badRequest().body("O motivo de conclusão deve ser informado ao concluir a oportunidade em questão.");
-        }
-
-        //return null;
     }
 
     @Override

@@ -92,14 +92,6 @@ public class OportunidadeServiceImplTest {
     }
 
     @Test
-    void findByIdNull() {
-        assertNull(service.findById(0L));
-
-        verify(repository).findById(0L);
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
     void findAll() {
         when(repository.findAll()).thenReturn(oportunidades);
 
