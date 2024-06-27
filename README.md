@@ -67,7 +67,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
   - Foco: Modelos de Dados.
   - Detalhes: Representam as entidades do domínio da aplicação, mapeadas para tabelas no banco de dados.
 
-   ![Mobiauto-UML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/b928cdaa-eeec-4fc8-8aa8-daa9ffe9059b)
+   ![PlaUML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/89306e9f-00cf-4146-8860-bdf49e7ea921)
+
 
 - **Security**
   - Foco: Configurações e Implementações de Segurança.
@@ -83,8 +84,7 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 
 Segue os resultados da cobertura de testes. Para executar os testes, basta acessar a pasta raiz do projeto e clicar na opção "Run with coverage".
 
-![Cobertura de testes](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/29c75667-a285-49c4-9fdc-521b573585f6)
-
+![cobertura de teste atual](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/28df20a9-6f2a-4102-aae3-49d751a3f9e1)
 
 ## Tecnico responsável
 
