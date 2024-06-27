@@ -13,8 +13,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 ## Pré-requisitos
 
 - Java JDK 17.0.10
-- Maven
-- IntelliJ IDEA
+- Maven - A aprtir da versão 	3.8.1
+- IntelliJ IDEA 
 - Docker
 - pgAdmin4 – Para realização de consultas de dados
 
