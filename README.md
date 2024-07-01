@@ -84,7 +84,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 
 Segue os resultados da cobertura de testes. Para executar os testes, basta acessar a pasta raiz do projeto e clicar na opção "Run with coverage".
 
-![cobertura de teste atual](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/28df20a9-6f2a-4102-aae3-49d751a3f9e1)
+![image](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/0405b01e-1442-44be-a114-40dec0f7090a)
+
 
 ## Evidências de alguns testes no ambiente local:
 
