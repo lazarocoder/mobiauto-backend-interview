@@ -66,8 +66,9 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 - **Model**
   - Foco: Modelos de Dados.
   - Detalhes: Representam as entidades do domínio da aplicação, mapeadas para tabelas no banco de dados.
+ 
 
-   ![PlaUML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/89306e9f-00cf-4146-8860-bdf49e7ea921)
+![UML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/254fca6e-d099-4e0f-9595-adcb193f3854)
 
 
 - **Security**
