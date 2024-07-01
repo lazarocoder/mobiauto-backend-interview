@@ -13,8 +13,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 ## Pré-requisitos
 
 - Java JDK 17.0.10
-- Maven
-- IntelliJ IDEA
+- Maven - A aprtir da versão 	3.8.1
+- IntelliJ IDEA 
 - Docker
 - pgAdmin4 – Para realização de consultas de dados
 
@@ -67,7 +67,8 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
   - Foco: Modelos de Dados.
   - Detalhes: Representam as entidades do domínio da aplicação, mapeadas para tabelas no banco de dados.
 
-   ![Mobiauto-UML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/b928cdaa-eeec-4fc8-8aa8-daa9ffe9059b)
+   ![PlaUML](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/89306e9f-00cf-4146-8860-bdf49e7ea921)
+
 
 - **Security**
   - Foco: Configurações e Implementações de Segurança.
@@ -83,7 +84,47 @@ A aplicação utiliza "Basic Authentication", requerendo que o usuário informe 
 
 Segue os resultados da cobertura de testes. Para executar os testes, basta acessar a pasta raiz do projeto e clicar na opção "Run with coverage".
 
-![Cobertura de testes](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/29c75667-a285-49c4-9fdc-521b573585f6)
+![cobertura de teste atual](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/28df20a9-6f2a-4102-aae3-49d751a3f9e1)
+
+## Evidências de alguns testes no ambiente local:
+
+![01](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/b50e3140-7d54-4587-87c2-609b80f58f3f)
+
+
+![02](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/374af0e7-4dcc-4524-840b-1ebf2ff4906a)
+
+![03](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/21bc7ef4-f8b9-42fb-87b9-2e7345538a69)
+
+![04](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/972ed55a-508b-46e0-8859-9a96e0e49809)
+
+![05](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/6e73d082-af1c-42a1-85f5-2098f9aab1a4)
+
+![06](https://github.com/lazarocoder/mobiauto-backend-interview/assets/63754729/114123e1-c786-4320-8493-8ffb0ef6bbe4)
+
+
+
+## Observações e Sugestões de Melhorias para implementar
+1.	Tratamento de Erros:
+o	Implementar um tratamento abrangente de erros em toda a API para garantir que mensagens de erro significativas sejam retornadas ao cliente.
+o	Melhorar mecanismos de tratamento de exceções para gerenciar diferentes tipos de erros, como erros de validação, erros de banco de dados e erros de autenticação/autorização.
+2.	Aprimoramentos de Segurança:
+o	Considerar a implementação de mecanismos de autenticação e autorização mais robustos, como OAuth2 ou JWT, pois a segurança hoje é básica.
+o	Garantir que dados sensíveis, como senhas, sejam criptografados e armazenados de forma segura.
+3.	Documentação da API:
+o	Expandir a documentação da API para incluir descrições detalhadas de todos os endpoints, parâmetros e formatos de resposta.
+4.	Testes:
+o	Aumentar a cobertura dos testes, especialmente para a lógica de negócios crítica e recursos de segurança.
+o	Melhorar testes de integração para garantir que diferentes componentes da aplicação funcionem juntos conforme esperado.
+5.	Otimização de Desempenho:
+o	Analisar e otimizar as consultas ao banco de dados para reduzir a latência e melhorar o desempenho.
+o	Considerar a implementação de estratégias de cache para dados frequentemente acessados.
+6.	Escalabilidade:
+o	Melhorar a aplicação com uma maior escalabilidade em mente, garantindo que ela possa lidar com o aumento da carga à medida que a base de usuários cresce.
+o	Utilizar ferramentas de orquestração de contêineres, como Kubernetes, para gerenciar e escalar a aplicação.
+7.	Qualidade do Código:
+o	Refatorar o código para melhorar a legibilidade, manutenibilidade e aderência às melhores práticas.
+o	Implementar ferramentas de análise estática de código para identificar e corrigir possíveis problemas cedo no processo de desenvolvimento.
+
 
 
 ## Tecnico responsável
