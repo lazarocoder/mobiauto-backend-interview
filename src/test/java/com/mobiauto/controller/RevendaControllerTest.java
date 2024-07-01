@@ -58,4 +58,35 @@ public class RevendaControllerTest {
         verifyNoMoreInteractions(service);
     }
 
+    @Test
+    void buscarRevendaPorId() {
+        when(service.findById(revenda.getId())).thenReturn(revenda);
+
+        ResponseEntity<Object> responseRevenda = controller.buscarRevendaPorId(revenda.getId());
+
+        assertEquals(ResponseEntity.ok(revenda), responseRevenda);
+
+    }
+
+    @Test
+    void cadastrarRevenda() {
+        when(service.save(revenda)).thenReturn(revenda);
+
+        ResponseEntity<Object> responseRevenda = controller.cadastrarRevenda(revenda);
+        assertEquals(ResponseEntity.ok(revenda), responseRevenda);
+
+    }
+
+    @Test
+    void editarRevenda() {
+        var revendaAtual = Revenda.builder()
+                .id(1L)
+                .nomeSocial("teste").build();
+
+        when(service.update(revendaAtual.getId(), revendaAtual)).thenReturn(revenda);
+
+        ResponseEntity<Object> responseRevenda = controller.editarRevenda(revendaAtual.getId(), revendaAtual);
+        assertEquals(ResponseEntity.ok(revenda), responseRevenda);
+    }
+
 }

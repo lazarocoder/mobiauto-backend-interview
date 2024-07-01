@@ -1,5 +1,6 @@
 package com.mobiauto.controller;
 
+import com.mobiauto.dto.CadastroOportunidadeDto;
 import com.mobiauto.enumerated.Cargo;
 import com.mobiauto.enumerated.Status;
 import com.mobiauto.model.Oportunidade;
@@ -106,6 +107,101 @@ public class OportunidadeControllerTest {
         assertEquals(ResponseEntity.ok(oportunidades), responseOportunidades);
         verify(service).findAll();
         verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    void buscarOportunidadesDaRevenda() {
+
+        when(service.buscarOportunidadesDaRevenda(userPrincipal)).thenReturn(oportunidades);
+
+        ResponseEntity<Object> responseOportunidades = controller.buscarOportunidadesDaRevenda(userPrincipal);
+
+        assertEquals(ResponseEntity.ok(oportunidades), responseOportunidades);
+
+    }
+
+    @Test
+    void buscarOportunidadePorId() {
+        when(service.findById(oportunidade.getId())).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.buscarOportunidadePorId(oportunidade.getId());
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
+
+    }
+
+    @Test
+    void cadastrarOportunidade() {
+        var cadastroOportunidadeDto = CadastroOportunidadeDto.builder()
+                .status(Status.NOVO)
+                .nomeCliente("José da Silva")
+                .emailCliente("josesilva@gmail.com")
+                .build();
+
+        when(service.save(cadastroOportunidadeDto)).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.cadastrarOportunidade(cadastroOportunidadeDto);
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
+    }
+
+    @Test
+    void atenderOportunidade() {
+        var cadastroOportunidadeDto = CadastroOportunidadeDto.builder()
+                .nomeCliente("José da Silva")
+                .emailCliente("josesilva@gmail.com")
+                .build();
+
+        when(service.atender(cadastroOportunidadeDto, userPrincipal)).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.atenderOportunidade(cadastroOportunidadeDto, userPrincipal);
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
+    }
+
+    @Test
+    void editarOportunidade() {
+        var oportunidadeAtual = Oportunidade.builder()
+                .id(1L)
+                .nomeCliente("José da Silva")
+                .emailCliente("josesilva@gmail.com")
+                .build();
+
+        when(service.update(oportunidadeAtual.getId(), oportunidadeAtual)).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.editarOportunidade(oportunidadeAtual.getId(), oportunidadeAtual);
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
+    }
+
+    @Test
+    void editarOportunidadeEmRevenda() {
+        var oportunidadeAtual = Oportunidade.builder()
+                .id(1L)
+                .nomeCliente("José da Silva")
+                .emailCliente("josesilva@gmail.com")
+                .build();
+
+        when(service.editarOportunidadeEmRevenda(oportunidadeAtual.getId(), oportunidadeAtual, userPrincipal)).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.editarOportunidadeEmRevenda(oportunidadeAtual.getId(), oportunidadeAtual, userPrincipal);
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
+    }
+
+    @Test
+    void editarOportunidadeAssociada() {
+        var oportunidadeAtual = Oportunidade.builder()
+                .id(1L)
+                .nomeCliente("José da Silva")
+                .emailCliente("josesilva@gmail.com")
+                .build();
+
+        when(service.editarOportunidadeAssociada(oportunidadeAtual.getId(), oportunidadeAtual, userPrincipal)).thenReturn(oportunidade);
+
+        ResponseEntity<Object> responseOportunidade = controller.editarOportunidadeAssociada(oportunidadeAtual.getId(), oportunidadeAtual, userPrincipal);
+
+        assertEquals(ResponseEntity.ok(oportunidade), responseOportunidade);
     }
 
 }

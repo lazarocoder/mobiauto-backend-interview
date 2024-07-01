@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,6 +79,15 @@ public class UsuarioServiceImplTest {
     }
 
     @Test
+    void findByEmail() {
+        when(repository.findByEmail(usuario.getEmail())).thenReturn(usuario);
+
+        Usuario usuarioRetornado = service.findByEmail(usuario.getEmail());
+
+        assertEquals(Optional.of(usuario).get(), usuarioRetornado);
+    }
+
+    @Test
     void findByIdEmail() {
         when(repository.findByEmail(usuario.getEmail())).thenReturn(usuario);
 
@@ -102,8 +111,7 @@ public class UsuarioServiceImplTest {
 
     @Test
     void findAllInRevenda() {
-        when(repository.findAll().stream().filter(u -> Objects.equals((u.getLojaAssociada() != null) ?
-                u.getLojaAssociada().getId() : null, usuario.getLojaAssociada().getId())).toList()).thenReturn(usuarios);
+        when(repository.findAll().stream().filter(u -> Objects.equals((u.getLojaAssociada() != null) ? u.getLojaAssociada().getId() : null, usuario.getLojaAssociada().getId())).toList()).thenReturn(usuarios);
 
         List<Usuario> listUsuarios = service.findAllInRevenda(usuario.getLojaAssociada().getId());
 
@@ -122,6 +130,17 @@ public class UsuarioServiceImplTest {
         verify(repository).save(usuario);
         verify(roleRepository).findAll();
         verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    void update() {
+        when(repository.findByEmail(usuario.getEmail())).thenReturn(usuario);
+        when(repository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(repository.save(usuario)).thenReturn(usuario);
+
+        Usuario usuarioRetornado = service.update(usuario.getId(), usuario);
+        assertEquals(Optional.of(usuario).get(), usuarioRetornado);
+
     }
 
 }

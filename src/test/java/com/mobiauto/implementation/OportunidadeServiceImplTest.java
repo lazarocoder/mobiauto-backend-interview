@@ -2,7 +2,9 @@ package com.mobiauto.implementation;
 
 import com.mobiauto.enumerated.Cargo;
 import com.mobiauto.enumerated.Status;
-import com.mobiauto.model.*;
+import com.mobiauto.model.Oportunidade;
+import com.mobiauto.model.Revenda;
+import com.mobiauto.model.Usuario;
 import com.mobiauto.service.repository.OportunidadeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,10 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 public class OportunidadeServiceImplTest {

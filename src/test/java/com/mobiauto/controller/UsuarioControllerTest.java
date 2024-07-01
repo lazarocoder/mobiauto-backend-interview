@@ -63,5 +63,65 @@ public class UsuarioControllerTest {
         verifyNoMoreInteractions(service);
     }
 
+    @Test
+    void buscarUsuariosDaRevenda() {
+
+        when(service.buscarUsuariosDaRevenda(userPrincipal)).thenReturn(usuarios);
+
+        ResponseEntity<Object> responseUsuarios = controller.buscarUsuariosDaRevenda(userPrincipal);
+
+        assertEquals(ResponseEntity.ok(usuarios), responseUsuarios);
+
+    }
+
+    @Test
+    void buscarUsuarioPorId() {
+        when(service.findById(usuario.getId())).thenReturn(usuario);
+
+        ResponseEntity<Object> responseUsuario = controller.buscarUsuarioPorId(usuario.getId());
+
+        assertEquals(ResponseEntity.ok(usuario), responseUsuario);
+
+    }
+
+    @Test
+    void cadastrarUsuario() {
+        when(service.save(usuario)).thenReturn(usuario);
+
+        ResponseEntity<Object> responseUsuario = controller.cadastrarUsuario(usuario);
+        assertEquals(ResponseEntity.ok(usuario), responseUsuario);
+
+    }
+
+    @Test
+    void cadastrarUsuarioEmRevenda() {
+
+        when(service.cadastrarUsuarioEmRevenda(usuario, userPrincipal)).thenReturn(usuario);
+
+        ResponseEntity<Object> responseUsuario = controller.cadastrarUsuarioEmRevenda(usuario, userPrincipal);
+
+        assertEquals(ResponseEntity.ok(usuario), responseUsuario);
+
+    }
+
+    @Test
+    void editarUsuario() {
+        when(service.update(usuario.getId(), usuario)).thenReturn(usuario);
+
+        ResponseEntity<Object> responseUsuario = controller.editarUsuario(usuario.getId(), usuario);
+
+        assertEquals(ResponseEntity.ok(usuario), responseUsuario);
+    }
+
+    @Test
+    void editarUsuarioEmRevenda() {
+
+        when(service.editarUsuarioEmRevenda(usuario.getId(), usuario, userPrincipal)).thenReturn(usuario);
+
+        ResponseEntity<Object> responseUsuario = controller.editarUsuarioEmRevenda(usuario.getId(), usuario, userPrincipal);
+
+        assertEquals(ResponseEntity.ok(usuario), responseUsuario);
+
+    }
 
 }
